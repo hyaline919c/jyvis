@@ -1,0 +1,49 @@
+package examples;
+
+public class LSystem {
+
+	static DrawingPanel panel = new DrawingPanel();
+
+	static int depth = 0;
+	static double turtleX, turtleY, turtleTheta = 0;
+	static double increment = .98 / Math.pow(3, depth);
+
+	static void createCurve(){
+		String string = "F";
+		for (int i = 0; i < depth; i++)
+			string = string.replace("F", "F+F--F+F");
+		
+		System.out.println(string);
+		
+		turtleX = .01;
+		turtleY = 0.5;
+		turtleTheta = 0;
+		increment = .98 / Math.pow(3, depth);
+		
+		for (char c : string.toCharArray())
+			if (c == 'F'){
+				double previousX = turtleX, previousY = turtleY;
+				turtleX += Math.cos(turtleTheta) * increment;
+				turtleY += Math.sin(turtleTheta) * increment;
+				panel.add(new Line(previousX, previousY, turtleX, turtleY));
+			} else if (c == '+')
+				turtleTheta += Math.PI / 3;
+		else if (c == '-')
+			turtleTheta -= Math.PI /3;
+	}
+
+	public static void main(String[] args){
+		createCurve();
+		panel.showInFrame();
+		panel.addMouseListener(new MouseAdapter(){
+			public void mouseClicked(MouseEvent arg0){
+				depth += 1;
+				panel.clearObjects();
+				createCurve();
+				panel.updateDisplay();
+			}
+		}
+	}
+
+}
+
